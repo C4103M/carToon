@@ -1,3 +1,6 @@
 [submodule "3.Implementação"]
 	path = 3.Implementação
 	url = https://github.com/C4103M/carToon-implementacao.git
+[submodule "3.Implementacao"]
+	path = 3.Implementacao
+	url = https://github.com/C4103M/carToon-implementacao.git
