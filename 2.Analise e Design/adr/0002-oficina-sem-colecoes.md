@@ -80,11 +80,11 @@ caso específico (com `mappedBy`, `LAZY` e sem `cascade`), em um novo ADR.
 ## Pontos em aberto
 
 - **`Usuario → Oficina`:** `0..1` (perfis como SUPERADMIN podem não pertencer a
-  uma filial) ou `1` (todo usuário pertence a uma oficina).
+  uma oficina) ou `1` (todo usuário pertence a uma oficina).
 - **Ciclo de vida da `Oficina`:** exclusão física ou desativação (campo
   `ativo`). Desativar preserva o histórico.
 - **Oficina na `OrdemServico`:** guardar `oficina_id` na própria ordem
-  (recomendado, pois o mecânico pode ser transferido de filial sem alterar
+  (recomendado, pois o mecânico pode ser transferido de oficina sem alterar
   ordens antigas) ou derivá-la do mecânico responsável.
 
 ## Ajustes no diagrama
