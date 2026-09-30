@@ -1,27 +1,21 @@
-# ADR-0001: Sistema single-tenant (uma empresa, várias filiais)
+# ADR-0001: Sistema single-tenant (uma empresa, uma oficina)
 
-Status: Aceita (revisada em 2026-09-29)
+Status: Aceita (revisada em 2026-09-30)
 Data: 2026-09-18
 
 ## Contexto
-O sistema atende uma única empresa, que pode ter várias oficinas
-(matriz e filiais). Não há necessidade de isolar dados entre oficinas
-como se fossem clientes independentes do sistema.
+O sistema atende uma única empresa, com uma oficina.
 
 ## Decisão
 O sistema é single-tenant. Não existe entidade "Empresa/tenant" nem
-coluna tenant_id. Oficina é uma unidade da mesma empresa.
-
-## Filiais
-Filial é uma `Oficina` ligada à sua matriz. Regras e modelagem no ADR-0003.
+coluna tenant_id.
 
 ## Consequências no modelo
-- Cliente–Oficina: associação simples; cada cliente é cadastrado em uma oficina
-  (matriz ou filial). Ver ADR-0002.
-- Usuario–Oficina: associação simples; SUPERADMIN tem escopo global.
+- Cliente–Oficina: associação simples; cada cliente é cadastrado em uma oficina.
+  Ver ADR-0002.
+- Usuario–Oficina: associação simples; o SUPERADMIN cadastra a oficina e os ADMINs.
 - Unicidade global: placa do veículo e CPF do cliente são únicos no sistema.
-- Consultas não filtram por tenant, mas filtram pela oficina do usuário logado
-  (exceto o SUPERADMIN, que tem escopo global).
+- Consultas não filtram por tenant.
 
 ## Alternativas consideradas
 - Multi-tenant desde o início: descartada por adicionar complexidade
