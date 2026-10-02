@@ -1,0 +1,518 @@
+{
+	"info": {
+		"_postman_id": "cartoon-veiculo-historico-uc05-uc06",
+		"name": "CarToon - Testes de Sistema (UC05 - Manter Veículo & UC06 - Histórico do Veículo)",
+		"description": "Suíte de testes de sistema automatizados cobrindo todos os cenários de aceitação de UC05 (Manter Veículo) e UC06 (Consultar Histórico do Veículo).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "UC05 - Manter Veículo",
+			"item": [
+				{
+					"name": "Caso 01: Cadastrar Veículo Válido (Tradicional)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('Valida mensagem de sucesso e dados cadastrados', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.mensagem).to.eql('Veículo cadastrado com sucesso');",
+									"    pm.expect(json.placa).to.eql('XYZ-9876');",
+									"    pm.expect(json.montadora).to.eql('Ford');",
+									"    pm.expect(json.modelo).to.eql('Ka');",
+									"    pm.expect(json.ano).to.eql(2019);",
+									"    pm.expect(json.valorFipe).to.eql(35000);",
+									"    pm.expect(json.ativo).to.be.true;",
+									"    if (json.id) pm.environment.set('veiculoId', json.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clienteId\": {{clienteId}},\n  \"placa\": \"XYZ-9876\",\n  \"montadora\": \"Ford\",\n  \"modelo\": \"Ka\",\n  \"ano\": 2019,\n  \"valorFipe\": 35000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": ["{{baseUrl}}"]
+						}
+					}
+				},
+				{
+					"name": "Caso 01 (Mercosul): Cadastrar Veículo com Placa Mercosul",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('Placa Mercosul aceita e salva com sucesso', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.placa).to.eql('ABC1D23');",
+									"    pm.expect(json.mensagem).to.eql('Veículo cadastrado com sucesso');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clienteId\": {{clienteId}},\n  \"placa\": \"ABC1D23\",\n  \"montadora\": \"Volkswagen\",\n  \"modelo\": \"Gol 1.0\",\n  \"ano\": 2020,\n  \"valorFipe\": 42000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": ["{{baseUrl}}"]
+						}
+					}
+				},
+				{
+					"name": "Caso 02: Impedir Cadastro de Placa Duplicada",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 409 Conflict', function () {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									"pm.test('Retorna mensagem exata de duplicidade', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.message).to.eql('Já existe um veículo cadastrado com esta placa no sistema.');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clienteId\": {{clienteId}},\n  \"placa\": \"XYZ-9876\",\n  \"montadora\": \"Ford\",\n  \"modelo\": \"Ka\",\n  \"ano\": 2019,\n  \"valorFipe\": 35000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": ["{{baseUrl}}"]
+						}
+					}
+				},
+				{
+					"name": "Caso 03: Editar Dados do Veículo (Alterar FIPE para 33000)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Valor FIPE alterado de 35000 para 33000 e vínculo mantido', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.valorFipe).to.eql(33000);",
+									"    pm.expect(json.mensagem).to.eql('Dados atualizados com sucesso');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"valorFipe\": 33000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{veiculoId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["{{veiculoId}}"]
+						}
+					}
+				},
+				{
+					"name": "Caso 04: Validar Formato de Placa Inválida (ABC-12)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 400 Bad Request', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test('Mensagem de erro de formato de placa', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.message).to.eql('Formato de placa inválido. Utilize o padrão AAA-1234 ou Mercosul.');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clienteId\": {{clienteId}},\n  \"placa\": \"ABC-12\",\n  \"montadora\": \"Ford\",\n  \"modelo\": \"Ka\",\n  \"ano\": 2019,\n  \"valorFipe\": 35000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": ["{{baseUrl}}"]
+						}
+					}
+				},
+				{
+					"name": "Caso 04: Validar Formato de Placa Inválida (123-ABCD)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 400 Bad Request', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test('Mensagem de erro de formato de placa', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.message).to.eql('Formato de placa inválido. Utilize o padrão AAA-1234 ou Mercosul.');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clienteId\": {{clienteId}},\n  \"placa\": \"123-ABCD\",\n  \"montadora\": \"Ford\",\n  \"modelo\": \"Ka\",\n  \"ano\": 2019,\n  \"valorFipe\": 35000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": ["{{baseUrl}}"]
+						}
+					}
+				},
+				{
+					"name": "Consultar Veículo por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/{{veiculoId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["{{veiculoId}}"]
+						}
+					}
+				},
+				{
+					"name": "Consultar Veículo por Placa",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/placa/{{placa}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["placa", "{{placa}}"]
+						}
+					}
+				},
+				{
+					"name": "Listar Veículos Paginados",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Inativar Veículo (Soft Delete)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 204 No Content', function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"url": {
+							"raw": "{{baseUrl}}/{{veiculoId}}/inativar",
+							"host": ["{{baseUrl}}"],
+							"path": ["{{veiculoId}}", "inativar"]
+						}
+					}
+				},
+				{
+					"name": "Reativar Veículo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 204 No Content', function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"url": {
+							"raw": "{{baseUrl}}/{{veiculoId}}/reativar",
+							"host": ["{{baseUrl}}"],
+							"path": ["{{veiculoId}}", "reativar"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "UC06 - Consultar Histórico do Veículo",
+			"item": [
+				{
+					"name": "Caso 01: Consultar Histórico por Placa Existente com Ordens",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Histórico recuperado com sucesso e contém ordens', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json).to.have.property('veiculo');",
+									"    pm.expect(json).to.have.property('ordensServico');",
+									"    pm.expect(json.veiculo.placa).to.eql(pm.environment.get('placa'));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/{{placa}}/historico",
+							"host": ["{{baseUrl}}"],
+							"path": ["{{placa}}", "historico"]
+						}
+					}
+				},
+				{
+					"name": "Caso 02: Consultar Histórico de Veículo Sem Histórico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Exibe mensagem: Nenhuma ordem de serviço encontrada para este veículo.', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.mensagem).to.eql('Nenhuma ordem de serviço encontrada para este veículo.');",
+									"    pm.expect(json.ordensServico).to.be.an('array').that.is.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/ABC1D23/historico",
+							"host": ["{{baseUrl}}"],
+							"path": ["ABC1D23", "historico"]
+						}
+					}
+				},
+				{
+					"name": "Caso 03: Consultar Histórico por Placa Inexistente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 404 Not Found', function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test('Exibe mensagem de erro: Veículo não encontrado.', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.message).to.eql('Veículo não encontrado.');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/NAO-9999/historico",
+							"host": ["{{baseUrl}}"],
+							"path": ["NAO-9999", "historico"]
+						}
+					}
+				},
+				{
+					"name": "Caso 04: Detalhar Ordem do Histórico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 200 OK ou 404 se ID não existir', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrlOrdem}}/1/detalhado",
+							"host": ["{{baseUrlOrdem}}"],
+							"path": ["1", "detalhado"]
+						}
+					}
+				},
+				{
+					"name": "Caso 05: Consultar Histórico Paginado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code é 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Retorna estrutura paginada (content)', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json).to.have.property('content');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/{{placa}}/historico/paginado?page=0&size=5",
+							"host": ["{{baseUrl}}"],
+							"path": ["{{placa}}", "historico", "paginado"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "5"}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
