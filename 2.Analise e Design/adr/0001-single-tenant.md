@@ -1,6 +1,6 @@
 # ADR-0001: Sistema single-tenant (uma empresa, uma oficina)
 
-Status: Aceita (revisada em 2026-09-30)
+Status: Substituída pelo ADR-0003 (aceita em 2026-09-18, revisada em 2026-09-30)
 Data: 2026-09-18
 
 ## Contexto
